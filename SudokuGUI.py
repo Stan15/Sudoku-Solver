@@ -206,7 +206,7 @@ def finished(sudoku):
                     if sudoku[i][j]==sudokuAns[i][j]:
                         correct+=1
                     else:
-                        wrong.append(i,j)
+                        wrong.append([i,j])
                         
 
         if correct==spaces:
@@ -300,7 +300,7 @@ while run:
             curX, curY = pygame.mouse.get_pos()
             boardCol=math.floor(curX/gap)   #selected sudoku cell column
             boardRow=math.floor(curY/gap)   #selected sudoku cell row
-            if curX<=boardW and curY<=boardH:
+            if curX<=boardW and curY<=boardH and solving[1]==0:
                 selected=True 
             else:
                 selected=False

@@ -1,11 +1,9 @@
 import copy, random, time
 
-def boxCenter(row, col):
-    coords=[1,4,7]  #all permutations of this is are all the center cells of the 9 boxes in the grid
-    for i in [-1, 0, 1]:
-        for j in [-1, 0, 1]:
-            if ((row+i) in coords) and ((col+j) in coords): #making a 3x3 cell square around the current row,col. only one cell in this square is a center cell.
-                return [row+i, col+j]
+def boxCoords(row, col):
+    boxRow = 3*(row//3)
+    boxCol = 3*(col//3)
+    return boxRow, boxCol
 
 def cellSpaces(sudoku):
     cells=[]
@@ -18,18 +16,20 @@ def cellSpaces(sudoku):
 def validNums(sudoku, row, col):
     invalid=[]
     for i in range(len(sudoku)):
-        for j in range(len(sudoku)):
-            invalid.append(sudoku[row][j])
+        if sudoku[i][col]!=0:
             invalid.append(sudoku[i][col])
+        if sudoku[row][i]!=0:
+            invalid.append(sudoku[row][i])
 
-    centerRow, centerCol = boxCenter(row, col)
-    for i in [-1, 0, 1]:
-        for j in [-1, 0, 1]:
-            invalid.append(sudoku[centerRow+i][centerCol+j])
+    boxRow, boxCol = boxCoords(row, col)
+    for i in [0, 1, 2]:
+        for j in [0, 1, 2]:
+            if not(boxRow+i==row or boxCol+j==col):
+                num=sudoku[boxRow+i][boxCol+j]
+                if num!=0:
+                    invalid.append(num)
 
-    invalid = list(filter(lambda a: a != 0, invalid))   #filter empty spaces
-    invalid = set(invalid)
-    valid = list({1,2,3,4,5,6,7,8,9} - invalid)
+    valid = list({1,2,3,4,5,6,7,8,9} - set(invalid))
 
     return valid
 
@@ -48,7 +48,7 @@ def solve(sudoku, steps=False, both=False):
     
     def solveNext(): 
         global count
-        row=spaces[count][0]                                                      #the index of the current space to be filled
+        row=spaces[count][0]               #the index of the current space to be filled
         col=spaces[count][1]
 
         numberpool[count]=validNums(sudokuSol, row, col)
@@ -90,19 +90,35 @@ def solve(sudoku, steps=False, both=False):
         return sudokuSol
     
 
-# autoSol=[[1, 0, 0, 0, 9, 2, 0, 0, 7],
-#          [4, 5, 0, 0, 0, 7, 1, 0, 0], 
-#          [2, 0, 0, 8, 0, 4, 0, 5, 0], 
-#          [0, 0, 4, 0, 3, 0, 0, 9, 0], 
-#          [0, 2, 0, 0, 0, 0, 0, 6, 0], 
-#          [0, 0, 0, 0, 2, 0, 0, 0, 0], 
-#          [0, 9, 0, 2, 0, 0, 0, 1, 8], 
-#          [5, 0, 0, 0, 0, 1, 3, 0, 9], 
-#          [8, 1, 6, 0, 0, 0, 5, 0, 0]]
+test=[[1, 0, 0, 0, 9, 2, 0, 0, 7],
+     [4, 5, 0, 0, 0, 7, 1, 0, 0], 
+     [2, 0, 0, 8, 0, 4, 0, 5, 0], 
+     [0, 0, 4, 0, 3, 0, 0, 9, 0], 
+     [0, 2, 0, 0, 0, 0, 0, 6, 0], 
+     [0, 0, 0, 0, 2, 0, 0, 0, 0], 
+     [0, 9, 0, 2, 0, 0, 0, 1, 8], 
+     [5, 0, 0, 0, 0, 1, 3, 0, 9], 
+     [8, 1, 6, 0, 0, 0, 5, 0, 0]]
 
+#-----------------------Run time and step count---------------------------------
 # start=time.time()
-# sudokuSol, actions = solve(autoSol, both=True)
+# sudokuSol, actions = solve(test, both=True)
 # end=time.time()
 # for i in sudokuSol:
 #     print(i)
 # print("solved in {} seconds. {} steps taken".format(end-start, len(actions)))
+# #-------------------------------------------------------------------------------
+
+# #----------------------------Average Time-----------------------------
+# times=[]
+# def runner():
+#     start=time.time()
+#     solve(test)
+#     end=time.time()
+#     times.append(end-start)
+
+# for i in range(1000):
+#     runner()
+
+# print("Average time is: {} seconds".format(sum(times)/len(times)))
+#----------------------------------------------------------------------

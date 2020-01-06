@@ -30,7 +30,6 @@ def validNums(sudoku, row, col):
                     invalid.append(num)
 
     valid = list({1,2,3,4,5,6,7,8,9} - set(invalid))
-
     return valid
 
 count=0
@@ -42,7 +41,7 @@ def solve(sudoku, steps=False, both=False):
 
     sudokuSol=copy.deepcopy(sudoku)
     spaces=cellSpaces(sudokuSol)
-    numberpool=[None]*(len(spaces))
+    valid=[None]*(len(spaces))
     actions=[]
 
     
@@ -51,13 +50,13 @@ def solve(sudoku, steps=False, both=False):
         row=spaces[count][0]               #the index of the current space to be filled
         col=spaces[count][1]
 
-        numberpool[count]=validNums(sudokuSol, row, col)
-        while numberpool[count]!=[] and spaces[-1][2]==0:
-            numIndex=random.randint(0,len(numberpool[count])-1)
-            finalNum=numberpool[count][numIndex]   #choose the numIndex-th valid number for the current cell
+        valid[count]=validNums(sudokuSol, row, col)
+        while valid[count]!=[]:
+            numIndex=random.randint(0,len(valid[count])-1)
+            finalNum=valid[count][numIndex]   #choose the numIndex-th valid number for the current cell
             sudokuSol[row][col]=finalNum
             spaces[count][2]=1        #change cell state to filled
-            numberpool[count].pop(numIndex)        #remove that chosen number from the numberpool
+            valid[count].pop(numIndex)        #remove that chosen number from the valid
 
             if count<len(spaces)-1:         #don't add to count if count is at its maximum value(if at the last space to be filled)
                 count+=1
@@ -66,10 +65,8 @@ def solve(sudoku, steps=False, both=False):
             
             solveNext()
 
-        if numberpool[count]==[] and spaces[-1][2]==0:      #if there is no other possible number for this cell and the last cellSpace is empty(sudoku is not already solved)
+        if valid[count]==[] and spaces[-1][2]==0:      #if there is no other possible number for this cell and the last cellSpace is empty(sudoku is not already solved)
             count-=1
-            row=spaces[count][0]
-            col=spaces[count][1]
             sudokuSol[row][col]=0
             spaces[count][2]=0        #change cell state to unfilled
             
@@ -78,8 +75,7 @@ def solve(sudoku, steps=False, both=False):
             
 
     solveNext()
-    #when finished solving, do these.
-    actions.append("finished")
+    #when finished solving, do this.
     count=0
     
     if both:
@@ -107,9 +103,9 @@ test=[[1, 0, 0, 0, 9, 2, 0, 0, 7],
 # for i in sudokuSol:
 #     print(i)
 # print("solved in {} seconds. {} steps taken".format(end-start, len(actions)))
-# #-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
-# #----------------------------Average Time-----------------------------
+#----------------------------Average Time-----------------------------
 # times=[]
 # def runner():
 #     start=time.time()
@@ -120,5 +116,6 @@ test=[[1, 0, 0, 0, 9, 2, 0, 0, 7],
 # for i in range(1000):
 #     runner()
 
+# print(times)
 # print("Average time is: {} seconds".format(sum(times)/len(times)))
 #----------------------------------------------------------------------

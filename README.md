@@ -11,7 +11,7 @@ Afterwards, run the python file SudokuGUI.py.
 ![Sudoku-solver](https://user-images.githubusercontent.com/47716543/102816730-7dd4f680-439c-11eb-81d4-380e8309ea2a.gif)
 
 ## Future plans
-I am looking to work on creating a sudoku solver in the future, but it is not currently functional.
+I am looking to work on creating a sudoku maker in the future, but it is not currently functional.
 
 
 
